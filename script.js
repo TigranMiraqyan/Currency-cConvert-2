@@ -1,37 +1,23 @@
-const amountInput = document.getElementById('amount');
-const fromSelect = document.getElementById('from');
-const toSelect = document.getElementById('to');
-const convertedAmount = document.getElementById('convertedAmount');
-fetch('https://api.exchangerate-api.com/v4/latest/USD')
+const fromCurrency = document.getElementById('fromCurrency');
+const toCurrency = document.getElementById('toCurrency');
+const amount = document.getElementById('amount');
+const result = document.getElementById('result');
+
+  fetch('https://restcountries.com/v3.1/all')
     .then(response => response.json())
     .then(data => {
-        const currencies = Object.keys(data.rates);
-        currencies.forEach(currency => {
-            const option1 = new Option(currency, currency);
-            const option2 = new Option(currency, currency);
-            fromSelect.add(option1);
-            toSelect.add(option2);
-            const flag = document.createElement('img');
-            flag.src = `https://flagsapi.com/:country_code${currency.slice(0, 2)}/:style/:size.png/`;
-            flag.alt = currency;
-            fromSelect.options[fromSelect.options.length - 1].appendChild(flag);
-            toSelect.options[toSelect.options.length - 1].appendChild(flag.cloneNode());
-        });
+      data.forEach(country => {
+        const option = document.createElement('option');
+        option.text = `${country.name.common} (${country.currencies[Object.keys(country.currencies)[0]].name})`;
+        option.value = country.currencies[Object.keys(country.currencies)[0]].code;
+        fromCurrency.add(option);
+        toCurrency.add(option.cloneNode(true));
+      });
     });
-amountInput.addEventListener('input', convertCurrency);
-fromSelect.addEventListener('change', convertCurrency);
-toSelect.addEventListener('change', convertCurrency);
 
-function convertCurrency() {
-    const amount = amountInput.value;
-    const fromCurrency = fromSelect.value;
-    const toCurrency = toSelect.value;
-
-    fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
-        .then(response => response.json())
-        .then(data => {
-            const exchangeRate = data.rates[toCurrency];
-            const result = amount * exchangeRate;
-            convertedAmount.textContent = result.toFixed(2);
-        });
-}
+  function convertCurrency() {
+    const from = fromCurrency.value;
+    const to = toCurrency.value;
+    const amountValue = amount.value;
+    result.textContent = (amountValue * 0.75).toFixed(2); 
+  }
