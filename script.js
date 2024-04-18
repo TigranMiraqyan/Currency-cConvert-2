@@ -8,7 +8,7 @@ fetch('https://restcountries.com/v3.1/all')
   .then(data => {
     data.forEach(country => {
       const option = document.createElement('option');
-      option.text = `${country.name.common} (${country.currencies[Object.keys(country.currencies)[0]].name})`;
+      option.text = `${Object.keys(country.currencies)[0]} (${country.name.common})`;
       option.value = country.currencies[Object.keys(country.currencies)[0]].code;
       fromCurrency.appendChild(option);
       toCurrency.appendChild(option.cloneNode(true));
@@ -16,14 +16,10 @@ fetch('https://restcountries.com/v3.1/all')
   });
 
 function convertCurrency() {
-  const from = fromCurrency.value;
-  const to = toCurrency.value;
-  const amountValue = amount.value;
-
-  fetch(`https://restcountries.com/v3.1/currency/{currency}/${from}`)
+  fetch('https://v6.exchangerate-api.com/v6/823c766a31f3f4bf4eb252a3/latest/USD')
     .then(response => response.json())
     .then(data => {
-      const exchangeRate = data.rates[to];
-      result.textContent = (amountValue * exchangeRate).toFixed(2);
+      const exchangeRate = data.conversion_rates[toCurrency.value];
+      result.textContent = (amount.value * exchangeRate).toFixed(2);
     });
 };
